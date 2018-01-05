@@ -1,0 +1,93 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int main()
+{
+	int firstline[4] = { 0,1,2,3 };
+	int cmd[24][4];
+	int isinline;
+	int flag;
+	for (int i = 0; i < 4; i++)//生成全排列，得到所有可能的指令
+		cmd[0][i] = firstline[i];
+	for (int i = 1; i < 24; i++) {
+		for (int p=3;p>=1;p--)
+			if (firstline[p]>firstline[p-1]){
+				//firstline[p - 1]++;
+				for (int j = firstline[p - 1] + 1; j < 4; j++) {
+					flag = 1;
+					for (int k = 0; k < p - 1; k++)
+						if (firstline[k] == j) {
+							flag = 0;
+							break;
+						}
+					if (flag) {
+						firstline[p - 1] = j;
+						break;
+					}
+				}
+				for (int j = p; j < 4; j++)
+					for (int k = 0; k < 4; k++) {
+						isinline = 1;
+						for (int q = 0; q < j; q++)
+							if (k == firstline[q]) {
+								isinline = 0;
+								break;
+							}
+						if (isinline) {
+							firstline[j] = k;
+							break;
+						}
+					}
+				break;
+			}
+		for (int j = 0; j < 4; j++)
+			cmd[i][j] = firstline[j];
+	}//全排列生成完毕
+	int col, row;
+	scanf("%d %d", &row, &col);
+	int map[100][100];
+	int cx, cy;
+	int ex, ey;
+	char s[100];//读地图
+	for (int i = 0; i < row; i++) {
+		scanf("%s", s);
+		for (int j=0;j<col;j++)
+			switch (s[j]) {
+			case '.':map[i][j] = 1; break;
+			case 'S':map[i][j] = 1; cx = i; cy = j; break;
+			case 'E':map[i][j] = 1; ex = i; ey = j; break;
+			case '#':map[i][j] = 0; break;
+			}
+	}
+	char instruction[105];
+	int len = strlen(instruction);
+	scanf("%s", instruction);
+	int out = 0;
+	int order;
+	int x = cx, y = cy;
+	for (int i = 0; i < 24; i++) {
+		cx = x;
+		cy = y;
+		for (int j = 0; j < len; j++) {
+			order = instruction[j] - '0';
+			if (order == cmd[i][0]) 
+				cx++;
+			if (order == cmd[i][1])
+				cx--;
+			if (order == cmd[i][2]) 
+				cy++;
+			if (order == cmd[i][3]) 
+				cy--;
+			if (cx == ex&&cy == ey) {
+				out++;
+				break;
+			}
+			if (!(map[cx][cy]==1))
+				break;
+		}
+	}
+	printf("%d", out);
+	system("pause");
+	return 0;
+}
