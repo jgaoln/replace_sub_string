@@ -1,0 +1,64 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 100
+struct stack {
+	char ch[100];
+	int top;
+};
+void push(struct stack *a, char ch) {
+	if (a->top == MAX)
+		printf("the stack is full");
+	else {
+		a->ch[a->top] = ch;
+		a->top += 1;
+	}
+}
+void pop(struct stack*a) {
+	if (a->top == 0)
+		printf("empty stack");
+	else
+		a->top -= 1;
+}
+int check_empty_stack(struct stack*a){
+	return a->top == 0 ? 1 : 0;
+}
+void initialize(struct stack*a) {
+	a->top = 0;
+}
+int main()
+{
+	struct stack brackets;
+	char ch;
+	ch = getchar();
+	initialize(&brackets);
+	while (ch != '\n') {
+		if (ch == '(' || ch == '{' || ch == '[')
+			push(&brackets, ch);
+		if (ch == ')' && brackets.ch[brackets.top - 1] == '(')
+			pop(&brackets);
+		if (ch == '}' && brackets.ch[brackets.top - 1] == '{')
+			pop(&brackets);
+		if (ch == ']' && brackets.ch[brackets.top - 1] == '[')
+			pop(&brackets);
+		if (ch == ')' && brackets.ch[brackets.top - 1] != '(') {
+			printf("no");
+			system("pause");
+			return 0;
+		}
+		if (ch == '}' && brackets.ch[brackets.top - 1] != '{') {
+			printf("no");
+			system("pause");
+			return 0;
+		}
+		if (ch == ']' && brackets.ch[brackets.top - 1] != '[') {
+			printf("no");
+			system("pause");
+			return 0;
+		}
+		ch = getchar();
+	}
+	check_empty_stack(&brackets) ? printf("yes") : printf("no");
+	system("pause");
+	return 0;
+}
